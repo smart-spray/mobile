@@ -8,8 +8,8 @@ import {
 } from "@expo-google-fonts/montserrat";
 import AppLoading from "expo-app-loading";
 
+import { GlobalProvider } from "./src/hooks";
 import { theme } from "./src/theme/theme";
-
 import Routes from "./src/routes";
 
 export default function App() {
@@ -25,7 +25,9 @@ export default function App() {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <Routes />
+      <GlobalProvider>
+        <Routes />
+      </GlobalProvider>
     </NativeBaseProvider>
   );
 }

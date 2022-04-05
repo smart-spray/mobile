@@ -1,20 +1,25 @@
 import * as React from "react";
 import { Center, Flex, Heading, Text, VStack } from "native-base";
 import { SafeAreaView } from "react-native";
+import { ParamListBase, useNavigation } from "@react-navigation/core";
+import { StackNavigationProp } from "@react-navigation/stack";
+
 import { Button } from "../../components/Button/Button";
 
 export function Home() {
+  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+
   const user = {
     name: "Leandro",
     email: "leandro@gmail.com",
   };
 
   function handlePulverization() {
-    console.log("handlePulverization");
+    navigation.navigate("PulverizationBegin", {});
   }
 
   function handleDecontamination() {
-    console.log("handleDecontamination");
+    navigation.navigate("DecontaminationBegin", {});
   }
 
   return (
