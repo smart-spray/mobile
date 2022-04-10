@@ -1,16 +1,16 @@
 import * as React from "react";
-import { Center, PresenceTransition, Text, Flex, Box } from "native-base";
+import { Center, Text, Flex, Box } from "native-base";
 import LottieView from "lottie-react-native";
 import { ParamListBase, useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SafeAreaView, Alert } from "react-native";
 
+import { api } from "../../api";
+import { usePulverizations } from "../../hooks/usePulverizations";
 import { useTelemetry } from "../../hooks/useTelemetry";
 
 import { Button } from "../../components/Button/Button";
 import { Warning } from "../../components/Warning/Warning";
-import { api } from "../../api";
-import { usePulverizations } from "../../hooks/usePulverizations";
 
 const MILLISECONDS_INTERVAL = 10000; // 10 seconds
 
@@ -56,8 +56,7 @@ export function PulverizationHandler() {
             try {
               setIsLoading(true);
               clearInterval(statusInterval as NodeJS.Timer);
-
-              console.log({ elapsedTime });
+              clearInterval(elapsedInterval as NodeJS.Timer);
 
               await api.post("pulverizations", {
                 deviceId: "limpeza-esp32",

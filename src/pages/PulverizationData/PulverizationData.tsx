@@ -1,20 +1,16 @@
 import * as React from "react";
 import { Flex, Text, Box, VStack, useTheme } from "native-base";
 import { SafeAreaView, Alert } from "react-native";
-import {
-  NavigationRouteContext,
-  ParamListBase,
-  useNavigation,
-} from "@react-navigation/core";
+import { ParamListBase, useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { usePulverizations } from "../../hooks/usePulverizations";
+import { api } from "../../api";
 
 import { Checkbox } from "../../components/Checkbox/Checkbox";
 import { Button } from "../../components/Button/Button";
 import { Card, CardRow } from "../../components/Card/Card";
-import { api } from "../../api";
 
 export function PulverizationData() {
   const { colors } = useTheme();

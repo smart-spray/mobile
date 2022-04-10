@@ -9,6 +9,7 @@ import { Button } from "../../components/Button/Button";
 export function Home() {
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
 
+  // TODO: implement sign in and sign out
   const user = {
     name: "Leandro",
     email: "leandro@gmail.com",
@@ -39,10 +40,7 @@ export function Home() {
           <VStack w="100%" space={2} marginY={10}>
             <Button text="Pulverizar" onPress={handlePulverization} />
 
-            <Button
-              text="Descontaminar tanque"
-              onPress={handleDecontamination}
-            />
+            <Button text="Limpar o tanque" onPress={handleDecontamination} />
           </VStack>
         </Center>
 

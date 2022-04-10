@@ -12,6 +12,8 @@ import { DecontaminationBegin } from "../pages/DecontaminationBegin/Decontaminat
 import { DecontaminationData } from "../pages/DecontaminationData/DecontaminationData";
 import { PulverizationHandler } from "../pages/PulverizationHandler/PulverizationHandler";
 import { PulverizationCompleted } from "../pages/PulverizationCompleted/PulverizationCompleted";
+import { DecontaminationHandler } from "../pages/DecontaminationHandler/DecontaminationHandler";
+import { DecontaminationCompleted } from "../pages/DecontaminationCompleted/DecontaminationCompleted";
 
 const Stack = createStackNavigator();
 
@@ -125,7 +127,7 @@ export function StackRoutes() {
         name="DecontaminationData"
         component={DecontaminationData}
         options={{
-          headerTitle: "Descontaminação",
+          headerTitle: "Limpeza",
           header: ({ navigation, route, options, back }) => {
             const title = getHeaderTitle(options, route.name);
 
@@ -153,6 +155,21 @@ export function StackRoutes() {
               />
             );
           },
+        }}
+      />
+
+      <Stack.Screen
+        name="DecontaminationHandler"
+        component={DecontaminationHandler}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="DecontaminationCompleted"
+        component={DecontaminationCompleted}
+        options={{
+          headerTitle: "",
+          headerLeft: (props) => null,
         }}
       />
     </Stack.Navigator>

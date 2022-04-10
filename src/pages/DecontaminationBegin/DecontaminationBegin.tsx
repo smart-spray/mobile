@@ -4,24 +4,31 @@ import LottieView from "lottie-react-native";
 import { ParamListBase, useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 
+import { usePulverizations } from "../../hooks/usePulverizations";
+
 export function DecontaminationBegin() {
   const loaderRef = React.useRef<LottieView | null>(null);
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
 
+  const { fetchPulverizationHealth } = usePulverizations();
+
   React.useEffect(() => {
     loaderRef.current?.play();
 
-    // startDraftPulverization({
-    //   ...TODO
-    // });
+    const deviceId = "limpeza-esp32";
 
-    setTimeout(() => navigation.navigate("DecontaminationData", {}), 2000);
+    async function getPulverizationHealth() {
+      await fetchPulverizationHealth(deviceId);
+      setTimeout(() => navigation.navigate("DecontaminationData", {}), 1000);
+    }
+
+    getPulverizationHealth();
   }, []);
 
   return (
     <Center flex={1}>
-      <Text fontSize={18}>Estamos preparando a</Text>
-      <Text fontSize={18}>descontaminação, aguarde...</Text>
+      <Text fontSize={18}>Estamos preparando a limpeza</Text>
+      <Text fontSize={18}>do tanque, aguarde...</Text>
 
       <LottieView
         ref={loaderRef}

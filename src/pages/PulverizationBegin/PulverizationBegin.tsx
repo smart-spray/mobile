@@ -19,7 +19,7 @@ export function PulverizationBegin() {
 
     async function getPulverizationHealth() {
       await fetchPulverizationHealth(deviceId);
-      navigation.navigate("PulverizationData", {});
+      setTimeout(() => navigation.navigate("PulverizationData", {}), 1000);
     }
 
     getPulverizationHealth();
