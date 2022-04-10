@@ -15,12 +15,10 @@ export function PulverizationBegin() {
   React.useEffect(() => {
     loaderRef.current?.play();
 
-    // TODO: remove hard-coded device id
     const deviceId = "limpeza-esp32";
 
     async function getPulverizationHealth() {
-      const pulverizationHealth = await fetchPulverizationHealth(deviceId);
-      console.log({ pulverizationHealth });
+      await fetchPulverizationHealth(deviceId);
       navigation.navigate("PulverizationData", {});
     }
 

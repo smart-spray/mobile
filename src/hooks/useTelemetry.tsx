@@ -6,12 +6,16 @@ import {
   FlowRateTelemetry,
   PhAndTurbidityTelemetry,
 } from "../types/interfaces";
+import { api } from "../api";
 
 interface TelemetryProviderProps {
   children: React.ReactNode;
 }
 
 interface TelemetryContextData {
+  lastFlowRateValue: FlowRateTelemetry;
+  lastPhAndTurbidityValue: PhAndTurbidityTelemetry;
+
   fetchFlowRateTelemetry: (deviceId: string) => Promise<FlowRateTelemetry>;
   fetchPhAndTurbidityTelemetry: (
     deviceId: string
@@ -23,43 +27,49 @@ const TelemetryContext = React.createContext<TelemetryContextData>(
 );
 
 export function TelemetryProvider({ children }: TelemetryProviderProps) {
+  const [lastFlowRateValue, setLastFlowRateValue] =
+    React.useState<FlowRateTelemetry>({} as FlowRateTelemetry);
+
+  const [lastPhAndTurbidityValue, setLastPhAndTurbidityValue] =
+    React.useState<PhAndTurbidityTelemetry>({} as PhAndTurbidityTelemetry);
+
   async function fetchFlowRateTelemetry(
     deviceId: string
   ): Promise<FlowRateTelemetry> {
-    await sleep(2000);
+    const { data } = await api.get<FlowRateTelemetry[]>(
+      "telemetries/flow-rate"
+    );
 
-    // TODO: Remove fake flowRateTelemetry
-    return {
-      _id: "adoij39j3",
-      deviceId: deviceId,
-      isPulverizing: true,
-      status: "ok",
-      sensor1: 3,
-      sensor2: 2,
-      sensor3: 5,
-      sector: "B",
-    };
+    const [latestFlowRateTelemetry] = data;
+
+    if (latestFlowRateTelemetry !== lastFlowRateValue) {
+      setLastFlowRateValue(lastFlowRateValue);
+    }
+
+    return latestFlowRateTelemetry;
   }
 
   async function fetchPhAndTurbidityTelemetry(
     deviceId: string
   ): Promise<PhAndTurbidityTelemetry> {
-    await sleep(2000);
+    const { data } = await api.get<PhAndTurbidityTelemetry[]>(
+      "telemetries/ph-turbidity"
+    );
 
-    // TODO: Remove fake flowRateTelemetry
-    return {
-      _id: "dalskd09",
-      deviceId: deviceId,
-      isClean: true,
-      isPulverizing: true,
-      ph: 5.765,
-      tb: 2474.449951,
-    };
+    const [latestPhAndTurbidityTelemetry] = data;
+
+    if (latestPhAndTurbidityTelemetry !== lastPhAndTurbidityValue) {
+      setLastPhAndTurbidityValue(latestPhAndTurbidityTelemetry);
+    }
+
+    return latestPhAndTurbidityTelemetry;
   }
 
   return (
     <TelemetryContext.Provider
       value={{
+        lastFlowRateValue,
+        lastPhAndTurbidityValue,
         fetchFlowRateTelemetry,
         fetchPhAndTurbidityTelemetry,
       }}

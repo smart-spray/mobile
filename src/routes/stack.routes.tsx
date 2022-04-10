@@ -10,6 +10,8 @@ import { PulverizationBegin } from "../pages/PulverizationBegin/PulverizationBeg
 import { PulverizationData } from "../pages/PulverizationData/PulverizationData";
 import { DecontaminationBegin } from "../pages/DecontaminationBegin/DecontaminationBegin";
 import { DecontaminationData } from "../pages/DecontaminationData/DecontaminationData";
+import { PulverizationHandler } from "../pages/PulverizationHandler/PulverizationHandler";
+import { PulverizationCompleted } from "../pages/PulverizationCompleted/PulverizationCompleted";
 
 const Stack = createStackNavigator();
 
@@ -92,6 +94,21 @@ export function StackRoutes() {
               />
             );
           },
+        }}
+      />
+
+      <Stack.Screen
+        name="PulverizationHandler"
+        component={PulverizationHandler}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="PulverizationCompleted"
+        component={PulverizationCompleted}
+        options={{
+          headerTitle: "",
+          headerLeft: (props) => null,
         }}
       />
 

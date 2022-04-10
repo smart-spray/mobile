@@ -1,4 +1,5 @@
 import * as React from "react";
+import { api } from "../api";
 import { PulverizationHealth } from "../types/interfaces";
 import { sleep } from "../utils/sleep";
 
@@ -24,27 +25,12 @@ export function PulverizationProvider({
   async function fetchPulverizationHealth(
     deviceId: string
   ): Promise<PulverizationHealth> {
-    await sleep(2000);
+    const { data } = await api.get<PulverizationHealth>(
+      "pulverizations/health/limpeza-esp32?city=São Bernardo do Campo&state=SP"
+    );
 
-    // TODO: remove mocked pulverizationHealth
-    const health: PulverizationHealth = {
-      deviceId: deviceId,
-      isClean: true,
-      nozzleStatus: "ok",
-      weather: {
-        temperature: 19,
-        windDirection: "ESE",
-        windVelocity: 16.2,
-        humidity: 95.1,
-        condition: "Chuva",
-        pressure: 937.8,
-        sensation: 19,
-      },
-    };
-
-    setPulverizationHealth(health);
-
-    return health;
+    setPulverizationHealth(data);
+    return data;
   }
 
   return (
