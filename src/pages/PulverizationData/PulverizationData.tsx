@@ -24,15 +24,19 @@ export function PulverizationData() {
 
   const sprayStatusRows: CardRow[] = [
     {
-      key: "Limpo",
-      value: pulverizationHealth?.isClean ? "Sim" : "Não",
-    },
-    {
       key: "Bicos",
       value:
         pulverizationHealth?.nozzleStatus === "ok"
           ? "Não entupidos"
           : "Entupidos",
+    },
+    {
+      key: "pH do tanque",
+      value: String(pulverizationHealth?.ph.toFixed(2)),
+    },
+    {
+      key: "Data de coleta",
+      value: String(pulverizationHealth?.ph.toFixed(2)),
     },
   ];
 

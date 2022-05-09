@@ -11,8 +11,8 @@ export function Home() {
 
   // TODO: implement sign in and sign out
   const user = {
-    name: "Leandro",
-    email: "leandro@gmail.com",
+    name: "Daniela",
+    email: "merida@gmail.com",
   };
 
   function handlePulverization() {
@@ -27,7 +27,7 @@ export function Home() {
     <SafeAreaView style={{ flex: 1 }}>
       <Flex p={8} flex={1} justify="space-between">
         <Flex marginTop={10} w="100%">
-          <Heading fontSize={28}>Bem vindo,</Heading>
+          <Heading fontSize={28}>Bem vindo(a),</Heading>
           <Heading fontSize={28}>{user.name}</Heading>
         </Flex>
 

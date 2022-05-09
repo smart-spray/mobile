@@ -23,6 +23,11 @@ export function DecontaminationHandler() {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [elapsedTime, setElapsedTime] = React.useState(0);
+  const [decontaminationStarted, setDecontaminationStarted] =
+    React.useState(false);
+  const [title, setTitle] = React.useState("Aguardando início\nda limpeza");
+  const [decontaminationStopped, setDecontaminationStopped] =
+    React.useState(false);
 
   const [statusInterval, setStatusInterval] =
     React.useState<NodeJS.Timer | null>(null);
@@ -53,6 +58,12 @@ export function DecontaminationHandler() {
               createdAt: new Date().toISOString(),
             });
 
+            if (!decontaminationStopped) {
+              await api.put("decontaminations/stop", {
+                message: "S",
+              });
+            }
+
             setIsLoading(false);
             navigation.navigate("DecontaminationCompleted", {});
           } catch (err) {
@@ -66,8 +77,6 @@ export function DecontaminationHandler() {
   }
 
   React.useEffect(() => {
-    cleaningRef.current?.play();
-
     const interval = setInterval(() => {
       fetchTelemetry();
     }, MILLISECONDS_INTERVAL);
@@ -81,7 +90,16 @@ export function DecontaminationHandler() {
   }, []);
 
   React.useEffect(() => {
-    console.log({ lastPhAndTurbidityValue });
+    if (lastPhAndTurbidityValue.isClean) {
+      cleaningRef.current?.play();
+      setTitle("Limpeza\nem andamento");
+      setDecontaminationStarted(true);
+    }
+
+    if (!lastPhAndTurbidityValue.isClean && decontaminationStarted) {
+      setDecontaminationStopped(true);
+      setTitle("Limpeza completa");
+    }
   }, [lastPhAndTurbidityValue]);
 
   return (
@@ -96,7 +114,7 @@ export function DecontaminationHandler() {
             lineHeight={24}
             mb={4}
           >
-            Limpeza{"\n"}em andamento
+            {title}
           </Text>
 
           <LottieView
@@ -108,25 +126,43 @@ export function DecontaminationHandler() {
           />
 
           <Flex m={6} height={50}>
-            {lastPhAndTurbidityValue.ph && (
-              <Text fontSize={14}>
-                Último ph coletado: {lastPhAndTurbidityValue.ph ?? ""}
-              </Text>
-            )}
-            {lastPhAndTurbidityValue.tb && (
-              <Text fontSize={14}>
-                Última turbidez coletada: {lastPhAndTurbidityValue.tb ?? ""}
-              </Text>
+            {decontaminationStarted && (
+              <>
+                {lastPhAndTurbidityValue.ph && (
+                  <Text fontSize={14}>
+                    Último ph coletado:{" "}
+                    {lastPhAndTurbidityValue.ph.toFixed(2) ?? ""}
+                  </Text>
+                )}
+                {lastPhAndTurbidityValue.tb && (
+                  <Text fontSize={14}>
+                    Turbidez:{" "}
+                    {lastPhAndTurbidityValue.tb > 900 &&
+                    lastPhAndTurbidityValue.tb < 1200
+                      ? "água limpa"
+                      : "água turva"}
+                  </Text>
+                )}
+              </>
             )}
           </Flex>
         </Center>
 
         <Box w="100%" mt={3}>
+          {!decontaminationStopped && (
+            <Text fontSize={14} lineHeight={18} textAlign="center" mb={6}>
+              Nós iremos concluir a limpeza de maneira automática mas, caso
+              queira, é possível interromper a limpeza pelo botão abaixo:
+            </Text>
+          )}
+
           <Button
-            text="Concluir limpeza"
+            text={
+              decontaminationStopped ? "Concluir etapa" : "Interromper limpeza"
+            }
             onPress={handleStopDecontamination}
             loading={isLoading}
-            disabled={isLoading}
+            disabled={isLoading || !decontaminationStarted}
           />
         </Box>
       </Flex>

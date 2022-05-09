@@ -33,6 +33,7 @@ export interface PulverizationHealth {
   deviceId: string;
   isClean: boolean;
   nozzleStatus: "ok" | "nok";
+  ph: number;
   weather: PulverizationWeather;
 }
 

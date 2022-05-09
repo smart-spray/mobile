@@ -10,6 +10,11 @@ const api = axios.create({
   },
 });
 
+// api.interceptors.request.use((request) => {
+//   console.log({ request });
+//   return request;
+// });
+
 // api.interceptors.response.use(
 //   (response) => {
 //     if (response.data.access_token) {

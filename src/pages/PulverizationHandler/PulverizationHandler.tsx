@@ -28,6 +28,11 @@ export function PulverizationHandler() {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [elapsedTime, setElapsedTime] = React.useState(0);
+  const [pulverizationStarted, setPulverizationStarted] = React.useState(false);
+  const [pulverizationStopped, setPulverizationStopped] = React.useState(false);
+  const [title, setTitle] = React.useState(
+    "Aguardando início\nda pulverização"
+  );
 
   const [statusInterval, setStatusInterval] =
     React.useState<NodeJS.Timer | null>(null);
@@ -65,6 +70,12 @@ export function PulverizationHandler() {
                 createdAt: new Date().toISOString(),
               });
 
+              if (!pulverizationStopped) {
+                await api.put("pulverizations/stop", {
+                  message: "S",
+                });
+              }
+
               setIsLoading(false);
               navigation.navigate("PulverizationCompleted", {});
             } catch (err) {
@@ -78,8 +89,6 @@ export function PulverizationHandler() {
   }
 
   React.useEffect(() => {
-    tractorRef.current?.play();
-
     const interval = setInterval(() => {
       fetchTelemetry();
     }, MILLISECONDS_INTERVAL);
@@ -97,6 +106,17 @@ export function PulverizationHandler() {
   }, [lastFlowRateValue]);
 
   React.useEffect(() => {
+    if (lastPhAndTurbidityValue.isPulverizing) {
+      tractorRef.current?.play();
+      setTitle("Pulverização\nem andamento");
+      setPulverizationStarted(true);
+    }
+
+    if (!lastPhAndTurbidityValue.isPulverizing && pulverizationStarted) {
+      setPulverizationStopped(true);
+      setTitle("Pulverização completa");
+    }
+
     console.log({ lastPhAndTurbidityValue });
   }, [lastPhAndTurbidityValue]);
 
@@ -111,7 +131,7 @@ export function PulverizationHandler() {
             letterSpacing={-1}
             lineHeight={24}
           >
-            Pulverização{"\n"}em andamento
+            {title}
           </Text>
 
           <LottieView
@@ -122,31 +142,31 @@ export function PulverizationHandler() {
             source={require("../../assets/lotties/tractor.json")}
           />
 
-          <Flex m={6} height={110}>
-            {lastPhAndTurbidityValue.ph && (
-              <Text fontSize={14}>
-                Último ph coletado: {lastPhAndTurbidityValue.ph ?? ""}
-              </Text>
-            )}
-            {lastPhAndTurbidityValue.tb && (
-              <Text fontSize={14}>
-                Última turbidez coletada: {lastPhAndTurbidityValue.tb ?? ""}
-              </Text>
-            )}
-            {lastFlowRateValue.sensor1 && (
-              <Text fontSize={14}>
-                Vazão no 1° sensor: {lastFlowRateValue.sensor1 ?? ""}
-              </Text>
-            )}
-            {lastFlowRateValue.sensor2 && (
-              <Text fontSize={14}>
-                Vazão no 2° sensor: {lastFlowRateValue.sensor2 ?? ""}
-              </Text>
-            )}
-            {lastFlowRateValue.sensor3 && (
-              <Text fontSize={14}>
-                Vazão no 3° sensor: {lastFlowRateValue.sensor3 ?? ""}
-              </Text>
+          <Flex m={6} height={90}>
+            {pulverizationStarted && (
+              <>
+                {lastPhAndTurbidityValue.ph && (
+                  <Text fontSize={14}>
+                    Último ph coletado:{" "}
+                    {lastPhAndTurbidityValue.ph.toFixed(2) ?? ""}
+                  </Text>
+                )}
+                {lastFlowRateValue.sensor1 && (
+                  <Text fontSize={14}>
+                    Vazão no 1° sensor: {lastFlowRateValue.sensor1 ?? ""}
+                  </Text>
+                )}
+                {lastFlowRateValue.sensor2 && (
+                  <Text fontSize={14}>
+                    Vazão no 2° sensor: {lastFlowRateValue.sensor2 ?? ""}
+                  </Text>
+                )}
+                {lastFlowRateValue.sensor3 && (
+                  <Text fontSize={14}>
+                    Vazão no 3° sensor: {lastFlowRateValue.sensor3 ?? ""}
+                  </Text>
+                )}
+              </>
             )}
           </Flex>
 
@@ -160,11 +180,22 @@ export function PulverizationHandler() {
         </Center>
 
         <Box w="100%" mt={3}>
+          {!pulverizationStopped && (
+            <Text fontSize={14} lineHeight={18} textAlign="center" mb={6}>
+              Nós iremos concluir a pulverização de maneira automática mas, caso
+              queira, é possível interromper a pulverização pelo botão abaixo:
+            </Text>
+          )}
+
           <Button
-            text="Concluir pulverização"
+            text={
+              pulverizationStopped
+                ? "Concluir etapa"
+                : "Interromper pulverização"
+            }
             onPress={handleStopPulverization}
             loading={isLoading}
-            disabled={isLoading}
+            disabled={isLoading || !pulverizationStarted}
           />
         </Box>
       </Flex>

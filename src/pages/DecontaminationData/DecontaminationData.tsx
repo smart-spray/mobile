@@ -25,7 +25,11 @@ export function DecontaminationData() {
   const sprayStatusRows: CardRow[] = [
     {
       key: "Limpo",
-      value: pulverizationHealth?.isClean ? "Sim" : "Não",
+      value:
+        (pulverizationHealth?.ph as number) > 6 &&
+        (pulverizationHealth?.ph as number) < 8
+          ? "Sim"
+          : "Não",
     },
     {
       key: "Bicos",
@@ -33,6 +37,10 @@ export function DecontaminationData() {
         pulverizationHealth?.nozzleStatus === "ok"
           ? "Não entupidos"
           : "Entupidos",
+    },
+    {
+      key: "pH do tanque",
+      value: String(pulverizationHealth?.ph.toFixed(2)),
     },
   ];
 
